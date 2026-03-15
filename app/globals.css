@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #090b12;
-  --foreground: #e6ecf5;
-  --surface-1: #0f172a;
-  --surface-2: #131d33;
+  --background: #f8fafc;
+  --foreground: #ffffff;
+  --surface-1: #ffffff;
+  --surface-2: #eef4ff;
 }
 
 @theme inline {
@@ -22,7 +22,7 @@ body {
 
 .bg-app-gradient {
   background:
-    radial-gradient(1200px 420px at 92% -8%, rgb(56 189 248 / 0.12), transparent 65%),
-    radial-gradient(900px 360px at -8% 102%, rgb(99 102 241 / 0.14), transparent 62%),
-    linear-gradient(160deg, #090b12 0%, #0b1221 42%, #111827 100%);
+    radial-gradient(980px 420px at 100% -5%, rgb(59 130 246 / 0.14), transparent 65%),
+    radial-gradient(780px 320px at 0% 100%, rgb(14 165 233 / 0.12), transparent 60%),
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 42%, #eef5ff 100%);
 }

@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Risk Assessment Dashboard
 
-## Getting Started
+Next.js dashboard for tracking assets, risks, and GRC settings.
 
-First, run the development server:
+## Security Flow
+
+- Landing route `/` checks auth state from localStorage.
+- Unauthenticated users are redirected to `/login`.
+- Authenticated users are redirected to `/dashboard`.
+- Login state is stored in localStorage key `grc_auth`.
+
+Default demo credentials:
+
+- Username: `admin`
+- Password: `riskguard123`
+
+## Multi-OS Setup (Windows + Arch)
+
+Use the task that matches your environment:
+
+- Windows or regular Linux VS Code: `Dev (Cross-Platform)`, `Lint (Cross-Platform)`, `Build (Cross-Platform)`
+- Arch Linux with VS Code Flatpak: `Dev (Flatpak Host)`, `Lint (Flatpak Host)`, `Build (Flatpak Host)`
+
+Run from Command Palette: `Tasks: Run Task`.
+
+## Arch Linux + VS Code Flatpak Setup
+
+If VS Code is installed as Flatpak (`com.visualstudio.code`), `npm` is often not available inside the sandbox terminal.
+
+### 1. Ensure host Node.js is installed
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+sudo pacman -S nodejs npm
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Grant Flatpak access to your home and network
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+flatpak override --user --filesystem=home --share=network com.visualstudio.code
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Restart VS Code after applying overrides.
 
-## Learn More
+### 3. Run npm from host using flatpak-spawn
 
-To learn more about Next.js, take a look at the following resources:
+From the integrated terminal:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+flatpak-spawn --host npm install
+flatpak-spawn --host npm run dev
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This repository includes VS Code tasks in `.vscode/tasks.json` that already use `flatpak-spawn --host`:
 
-## Deploy on Vercel
+- `Dev (Flatpak Host)`
+- `Lint (Flatpak Host)`
+- `Build (Flatpak Host)`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Run them from Command Palette: `Tasks: Run Task`.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Windows Setup
+
+Install Node.js LTS from:
+
+- https://nodejs.org/
+
+Then run in terminal:
+
+```powershell
+npm install
+npm run dev
+```
+
+Or use task `Dev (Cross-Platform)`.
+
+## Local Run (Non-Flatpak VS Code)
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+## Useful Scripts
+
+- `npm run dev` - start local dev server
+- `npm run lint` - run ESLint
+- `npm run build` - production build
+- `npm run start` - run production server

@@ -32,9 +32,9 @@ function StatCard({
   accent?: string;
 }) {
   return (
-    <div className={`bg-slate-800/50 border rounded-xl px-5 py-4 ${accent ?? "border-slate-700"}`}>
-      <p className="text-xs font-medium text-slate-400 uppercase tracking-wider">{label}</p>
-      <p className={`text-3xl font-bold mt-1 ${accent ? "text-red-400" : "text-white"}`}>{value}</p>
+    <div className={`bg-white border rounded-2xl px-5 py-4 shadow-sm ${accent ?? "border-slate-200"}`}>
+      <p className="text-xs font-medium text-slate-500 uppercase tracking-wider">{label}</p>
+      <p className={`text-3xl font-bold mt-1 ${accent ? "text-red-700" : "text-slate-900"}`}>{value}</p>
       {sub && <p className="text-xs text-slate-500 mt-0.5">{sub}</p>}
     </div>
   );
@@ -80,7 +80,7 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
       legend: {
         position: "bottom" as const,
         labels: {
-          color: "#94a3b8",
+          color: "#64748b",
           font: { size: 11 },
           padding: 14,
           boxWidth: 12,
@@ -88,11 +88,11 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
         },
       },
       tooltip: {
-        backgroundColor: "#1e293b",
-        borderColor: "#334155",
+        backgroundColor: "#ffffff",
+        borderColor: "#cbd5e1",
         borderWidth: 1,
-        titleColor: "#e2e8f0",
-        bodyColor: "#94a3b8",
+        titleColor: "#0f172a",
+        bodyColor: "#475569",
         callbacks: {
           label: (ctx: { label?: string; parsed: number }) => {
             const pct = totalRisks > 0 ? Math.round((ctx.parsed / totalRisks) * 100) : 0;
@@ -123,13 +123,13 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
       {/* Page header */}
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-white">Executive Overview</h2>
-          <p className="text-sm text-slate-400 mt-0.5">{orgName} · ISO 27005 Risk Dashboard</p>
+          <h2 className="text-xl font-semibold text-slate-900">Executive Overview</h2>
+          <p className="text-sm text-slate-600 mt-0.5">{orgName} · ISO 27005 Risk Dashboard</p>
         </div>
         {exceedingAppetite > 0 && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/40 rounded-lg">
-            <span className="w-2 h-2 rounded-full bg-red-400 animate-pulse" />
-            <span className="text-sm font-semibold text-red-400">
+          <div className="flex items-center gap-2 px-4 py-2 bg-red-50 border border-red-200 rounded-xl">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-sm font-semibold text-red-700">
               {exceedingAppetite} risk{exceedingAppetite > 1 ? "s" : ""} exceeding appetite
             </span>
           </div>
@@ -145,14 +145,14 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
           label="Exceeding Appetite"
           value={exceedingAppetite}
           sub={`Threshold: >${riskAppetite}`}
-          accent={exceedingAppetite > 0 ? "border-red-500/40 bg-red-500/5" : undefined}
+          accent={exceedingAppetite > 0 ? "border-red-200 bg-red-50" : undefined}
         />
       </div>
 
       {/* Risk Appetite Banner */}
-      <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4">
+      <div className="bg-white border border-slate-200 rounded-2xl p-4 shadow-sm">
         <div className="flex items-center justify-between mb-2">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
             Risk Appetite Indicator
             <InfoTooltip
               term="Risk Appetite"
@@ -161,7 +161,7 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
           </p>
           <span className="text-xs text-slate-500">Threshold: {riskAppetite} / 25</span>
         </div>
-        <div className="h-3 bg-slate-700 rounded-full overflow-hidden">
+        <div className="h-3 bg-slate-100 rounded-full overflow-hidden">
           <div
             className="h-full rounded-full bg-gradient-to-r from-green-500 via-yellow-500 to-red-500"
             style={{ width: "100%" }}
@@ -172,11 +172,11 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
           style={{ paddingLeft: `${(riskAppetite / 25) * 100}%` }}
         >
           <div className="absolute -top-4 left-0 -translate-x-1/2 flex flex-col items-center">
-            <div className="w-px h-4 bg-white/60" />
-            <span className="text-[10px] text-white/60 whitespace-nowrap mt-0.5">Appetite ({riskAppetite})</span>
+            <div className="w-px h-4 bg-slate-400" />
+            <span className="text-[10px] text-slate-500 whitespace-nowrap mt-0.5">Appetite ({riskAppetite})</span>
           </div>
         </div>
-        <div className="flex justify-between text-[10px] text-slate-600 mt-4">
+        <div className="flex justify-between text-[10px] text-slate-400 mt-4">
           <span>1 — Minimal</span>
           <span>25 — Maximum</span>
         </div>
@@ -185,16 +185,16 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
       {/* Charts + Heatmap row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Treatment Distribution */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-1 mb-4">
-            <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Treatment Status</h3>
+            <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">Treatment Status</h3>
             <InfoTooltip
               term="Treatment Status"
               definition="Breakdown of how logged risks are being handled across the four ISO 27005 treatment options: Mitigate, Accept, Transfer, and Avoid."
             />
           </div>
           {totalRisks === 0 ? (
-            <div className="h-48 flex items-center justify-center text-slate-600 text-sm">No data yet</div>
+            <div className="h-48 flex items-center justify-center text-slate-400 text-sm">No data yet</div>
           ) : (
             <div className="h-52">
               <Doughnut data={treatmentData} options={chartOptions} />
@@ -203,12 +203,12 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
         </div>
 
         {/* Risk Level Distribution */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <div className="flex items-center gap-1 mb-4">
-            <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Risk Levels</h3>
+            <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">Risk Levels</h3>
           </div>
           {totalRisks === 0 ? (
-            <div className="h-48 flex items-center justify-center text-slate-600 text-sm">No data yet</div>
+            <div className="h-48 flex items-center justify-center text-slate-400 text-sm">No data yet</div>
           ) : (
             <>
               <div className="h-52">
@@ -219,36 +219,36 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
         </div>
 
         {/* Heat Map */}
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-5">
+        <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
           <RiskHeatMap risks={risks} riskAppetite={riskAppetite} />
         </div>
       </div>
 
       {/* Top Risks table */}
       {risks.length > 0 && (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-xl overflow-hidden">
-          <div className="px-5 py-4 border-b border-slate-700">
-            <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-slate-200 bg-slate-50/80">
+            <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
               Top Risks by Inherent Score
             </h3>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-700/60">
+                <tr className="border-b border-slate-200">
                   <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Threat</th>
                   <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Inherent Risk</th>
                   <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Treatment</th>
                   <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Residual Risk</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-700/40">
+              <tbody className="divide-y divide-slate-200">
                 {[...risks]
                   .sort((a, b) => b.inherentRisk - a.inherentRisk)
                   .slice(0, 5)
                   .map((r) => (
-                    <tr key={r.id} className="hover:bg-slate-800/40 transition-colors">
-                      <td className="px-5 py-3 text-white">{r.threat}</td>
+                    <tr key={r.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-3 text-slate-900">{r.threat}</td>
                       <td className="px-5 py-3">
                         <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
                           r.inherentRisk > riskAppetite
@@ -262,8 +262,8 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
                           {r.inherentRisk}
                         </span>
                       </td>
-                      <td className="px-5 py-3 text-slate-300">{r.treatmentStrategy}</td>
-                      <td className="px-5 py-3 text-slate-400 text-xs">
+                      <td className="px-5 py-3 text-slate-700">{r.treatmentStrategy}</td>
+                      <td className="px-5 py-3 text-slate-500 text-xs">
                         {r.residualRisk !== undefined ? r.residualRisk : "—"}
                       </td>
                     </tr>

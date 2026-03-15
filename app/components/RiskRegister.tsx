@@ -16,10 +16,10 @@ type LikelihoodImpact = 1 | 2 | 3 | 4 | 5;
 const TREATMENT_STRATEGIES: TreatmentStrategy[] = ["Mitigate", "Accept", "Transfer", "Avoid"];
 
 const TREATMENT_CLASSES: Record<TreatmentStrategy, string> = {
-  Mitigate:  "bg-blue-500/20 text-blue-400 border border-blue-500/30",
-  Accept:    "bg-slate-500/20 text-slate-400 border border-slate-500/30",
-  Transfer:  "bg-purple-500/20 text-purple-400 border border-purple-500/30",
-  Avoid:     "bg-orange-500/20 text-orange-400 border border-orange-500/30",
+  Mitigate:  "bg-blue-50 text-blue-700 border border-blue-200",
+  Accept:    "bg-slate-100 text-slate-700 border border-slate-200",
+  Transfer:  "bg-violet-50 text-violet-700 border border-violet-200",
+  Avoid:     "bg-orange-50 text-orange-700 border border-orange-200",
 };
 
 const TREATMENT_DESCRIPTIONS: Record<TreatmentStrategy, string> = {
@@ -119,8 +119,8 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-white">Risk Register</h2>
-          <p className="text-sm text-slate-400 mt-0.5">
+          <h2 className="text-xl font-semibold text-slate-900">Risk Register</h2>
+          <p className="text-sm text-slate-600 mt-0.5">
             Identify, analyze, and treat information security risks per ISO 27005.
             <InfoTooltip
               term="Risk Register (ISO 27005)"
@@ -132,7 +132,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
           onClick={() => { setShowForm((s) => !s); setForm(emptyForm(assets)); }}
           disabled={assets.length === 0}
           title={assets.length === 0 ? "Add an asset first" : undefined}
-          className="flex items-center gap-2 px-4 py-2 bg-indigo-600 hover:bg-indigo-500
+          className="flex items-center gap-2 px-4 py-2 bg-sky-600 hover:bg-sky-700
                      text-white text-sm font-medium rounded-lg transition-colors
                      disabled:opacity-40 disabled:cursor-not-allowed"
         >
@@ -142,27 +142,27 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
       </div>
 
       {assets.length === 0 && (
-        <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-lg text-amber-400 text-sm">
+        <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-amber-700 text-sm">
           Register at least one asset in the Asset Inventory before logging risks.
         </div>
       )}
 
       {/* Risk Entry Form */}
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-slate-800/50 border border-slate-700 rounded-xl p-5 space-y-5">
-          <h3 className="text-sm font-semibold text-slate-200 uppercase tracking-wider">New Risk Entry</h3>
+        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-2xl p-5 space-y-5 shadow-sm">
+          <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">New Risk Entry</h3>
 
           {/* Row 1: Asset + Threat + Vulnerability */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Affected Asset
               </label>
               <select
                 value={form.assetId}
                 onChange={(e) => setForm({ ...form, assetId: e.target.value })}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                           text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2
+                           text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 {assets.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
               </select>
@@ -170,7 +170,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Threat
                 <InfoTooltip
                   term="Threat (ISO 27005)"
@@ -183,15 +183,15 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                 onChange={(e) => setForm({ ...form, threat: e.target.value })}
                 maxLength={120}
                 placeholder="e.g. Ransomware Attack"
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                           text-sm text-white placeholder:text-slate-600
-                           focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2
+                           text-sm text-slate-900 placeholder:text-slate-400
+                           focus:outline-none focus:ring-2 focus:ring-sky-300"
               />
               {errors.threat && <p className="text-xs text-red-400">{errors.threat}</p>}
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Vulnerability
                 <InfoTooltip
                   term="Vulnerability (ISO 27005)"
@@ -204,9 +204,9 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                 onChange={(e) => setForm({ ...form, vulnerability: e.target.value })}
                 maxLength={120}
                 placeholder="e.g. Unpatched Operating System"
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                           text-sm text-white placeholder:text-slate-600
-                           focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2
+                           text-sm text-slate-900 placeholder:text-slate-400
+                           focus:outline-none focus:ring-2 focus:ring-sky-300"
               />
               {errors.vulnerability && <p className="text-xs text-red-400">{errors.vulnerability}</p>}
             </div>
@@ -215,7 +215,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
           {/* Row 2: Likelihood + Impact + Inherent Risk */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Likelihood (1–5)
                 <InfoTooltip
                   term="Likelihood"
@@ -225,15 +225,15 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
               <select
                 value={form.likelihood}
                 onChange={(e) => setForm({ ...form, likelihood: Number(e.target.value) as LikelihoodImpact })}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                           text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2
+                           text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 {SCORE_OPTIONS.map((v) => <option key={v} value={v}>{v}</option>)}
               </select>
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                 Impact (1–5)
                 <InfoTooltip
                   term="Impact"
@@ -243,24 +243,24 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
               <select
                 value={form.impact}
                 onChange={(e) => setForm({ ...form, impact: Number(e.target.value) as LikelihoodImpact })}
-                className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                           text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2
+                           text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
                 {SCORE_OPTIONS.map((v) => <option key={v} value={v}>{v}</option>)}
               </select>
             </div>
 
             {/* Live Inherent Risk preview */}
-            <div className="bg-slate-900/70 border border-slate-700 rounded-lg px-4 py-3 flex items-center justify-between">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 flex items-center justify-between">
               <div>
-                <p className="text-xs text-slate-400 uppercase tracking-wider">
+                <p className="text-xs text-slate-500 uppercase tracking-wider">
                   Inherent Risk
                   <InfoTooltip
                     term="Inherent Risk"
                     definition="The raw risk score before any controls are applied. Formula: Likelihood × Impact. Scores above your Risk Appetite indicate action is required."
                   />
                 </p>
-                <p className={`text-2xl font-bold mt-0.5 ${inherentRisk > riskAppetite ? "text-red-400" : "text-white"}`}>
+                <p className={`text-2xl font-bold mt-0.5 ${inherentRisk > riskAppetite ? "text-red-700" : "text-slate-900"}`}>
                   {inherentRisk}
                   <span className="text-xs font-normal text-slate-500 ml-1">/ 25</span>
                 </p>
@@ -273,7 +273,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
 
           {/* Row 3: Treatment Strategy */}
           <div className="space-y-2">
-            <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+            <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
               Treatment Strategy
               <InfoTooltip
                 term="Risk Treatment (ISO 27005)"
@@ -289,8 +289,8 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                   className={`
                     p-3 rounded-lg border text-sm font-medium text-left transition-all
                     ${form.treatmentStrategy === s
-                      ? "border-indigo-500 bg-indigo-600/20 text-white"
-                      : "border-slate-700 bg-slate-900/50 text-slate-400 hover:border-slate-600"
+                      ? "border-sky-300 bg-sky-50 text-sky-800"
+                      : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
                     }
                   `}
                 >
@@ -303,9 +303,9 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
 
           {/* Row 4: Control + Residual Risk (Mitigate only) */}
           {form.treatmentStrategy === "Mitigate" && (
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end p-4 bg-blue-500/5 border border-blue-500/20 rounded-xl">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end p-4 bg-sky-50 border border-sky-200 rounded-2xl">
               <div className="md:col-span-2 space-y-1">
-                <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+                <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
                   Control Implemented
                   <InfoTooltip
                     term="Security Control (ISO 27001 Annex A)"
@@ -318,39 +318,39 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                   onChange={(e) => setForm({ ...form, control: e.target.value })}
                   placeholder="e.g. Endpoint Detection & Response (EDR)"
                   maxLength={100}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                             text-sm text-white placeholder:text-slate-600
-                             focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2
+                             text-sm text-slate-900 placeholder:text-slate-400
+                             focus:outline-none focus:ring-2 focus:ring-sky-300"
                 />
                 {errors.control && <p className="text-xs text-red-400">{errors.control}</p>}
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">Residual Likelihood</label>
+                <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Residual Likelihood</label>
                 <select
                   value={form.residualLikelihood}
                   onChange={(e) => setForm({ ...form, residualLikelihood: Number(e.target.value) as LikelihoodImpact })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                             text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2
+                             text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300"
                 >
                   {SCORE_OPTIONS.map((v) => <option key={v} value={v}>{v}</option>)}
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-medium text-slate-400 uppercase tracking-wider">Residual Impact</label>
+                <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">Residual Impact</label>
                 <select
                   value={form.residualImpact}
                   onChange={(e) => setForm({ ...form, residualImpact: Number(e.target.value) as LikelihoodImpact })}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2
-                             text-sm text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2
+                             text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300"
                 >
                   {SCORE_OPTIONS.map((v) => <option key={v} value={v}>{v}</option>)}
                 </select>
               </div>
 
               <div className="md:col-span-4 flex items-center gap-3 pt-1">
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-600">
                   Residual Risk Score:
                   <InfoTooltip
                     term="Residual Risk (ISO 27005)"
@@ -367,7 +367,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
           <div className="flex justify-end">
             <button
               type="submit"
-              className="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm
+              className="px-6 py-2 bg-sky-600 hover:bg-sky-700 text-white text-sm
                          font-medium rounded-lg transition-colors"
             >
               Save Risk Entry
@@ -378,7 +378,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
 
       {/* Risk Table */}
       {risks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-16 text-slate-500">
+        <div className="flex flex-col items-center justify-center py-16 text-slate-400">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1} className="w-12 h-12 mb-3 opacity-40">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75a2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" />
           </svg>
@@ -396,7 +396,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
               <div
                 key={risk.id}
                 className={`rounded-xl border transition-all ${
-                  exceedsAppetite ? "border-red-500/40 bg-red-500/5" : "border-slate-700 bg-slate-800/30"
+                  exceedsAppetite ? "border-red-200 bg-red-50" : "border-slate-200 bg-white shadow-sm"
                 }`}
               >
                 {/* Row summary */}
@@ -410,7 +410,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                     </span>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-white truncate">{risk.threat}</p>
+                    <p className="text-sm font-medium text-slate-900 truncate">{risk.threat}</p>
                     <p className="text-xs text-slate-500 truncate">{getAssetName(risk.assetId)} · {risk.vulnerability}</p>
                   </div>
                   <span className={`flex-shrink-0 px-2 py-1 rounded text-xs font-semibold ${getRiskBgClass(risk.inherentRisk, riskAppetite)}`}>
@@ -421,7 +421,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                   </span>
                   <svg
                     viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
-                    className={`w-4 h-4 text-slate-500 flex-shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`}
+                    className={`w-4 h-4 text-slate-400 flex-shrink-0 transition-transform ${isExpanded ? "rotate-180" : ""}`}
                   >
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                   </svg>
@@ -429,26 +429,26 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
 
                 {/* Expanded detail */}
                 {isExpanded && (
-                  <div className="px-4 pb-4 border-t border-slate-700/50 pt-3 space-y-3">
+                  <div className="px-4 pb-4 border-t border-slate-200 pt-3 space-y-3">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-xs">
-                      <div className="bg-slate-900/60 rounded-lg p-3">
+                      <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
                         <p className="text-slate-500 uppercase tracking-wider mb-1">Likelihood</p>
-                        <p className="text-white font-semibold text-base">{risk.likelihood} / 5</p>
+                        <p className="text-slate-900 font-semibold text-base">{risk.likelihood} / 5</p>
                       </div>
-                      <div className="bg-slate-900/60 rounded-lg p-3">
+                      <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
                         <p className="text-slate-500 uppercase tracking-wider mb-1">Impact</p>
-                        <p className="text-white font-semibold text-base">{risk.impact} / 5</p>
+                        <p className="text-slate-900 font-semibold text-base">{risk.impact} / 5</p>
                       </div>
-                      <div className="bg-slate-900/60 rounded-lg p-3">
+                      <div className="bg-slate-50 rounded-xl p-3 border border-slate-200">
                         <p className="text-slate-500 uppercase tracking-wider mb-1">Inherent Risk</p>
-                        <p className={`font-bold text-base ${exceedsAppetite ? "text-red-400" : "text-white"}`}>
+                        <p className={`font-bold text-base ${exceedsAppetite ? "text-red-700" : "text-slate-900"}`}>
                           {risk.inherentRisk} — {riskLevel}
                         </p>
                       </div>
                       {risk.treatmentStrategy === "Mitigate" && risk.residualRisk !== undefined && (
-                        <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+                        <div className="bg-sky-50 border border-sky-200 rounded-xl p-3">
                           <p className="text-slate-500 uppercase tracking-wider mb-1">Residual Risk</p>
-                          <p className="text-blue-400 font-bold text-base">
+                          <p className="text-sky-700 font-bold text-base">
                             {risk.residualRisk} — {getRiskLevel(risk.residualRisk, riskAppetite)}
                           </p>
                         </div>
@@ -456,7 +456,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                     </div>
 
                     {risk.control && (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-slate-600">
                         <span className="text-slate-500 uppercase tracking-wider">Control: </span>
                         {risk.control}
                       </p>
@@ -465,7 +465,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                     <div className="flex justify-end">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(risk.id); }}
-                        className="text-xs text-slate-500 hover:text-red-400 transition-colors"
+                        className="text-xs text-slate-500 hover:text-red-700 transition-colors"
                       >
                         Remove Entry
                       </button>

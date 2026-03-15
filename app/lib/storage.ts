@@ -6,6 +6,12 @@ const KEYS = {
   assets: "grc_assets",
   risks: "grc_risks",
   settings: "grc_settings",
+  auth: "grc_auth",
+};
+
+type AuthState = {
+  isAuthenticated: boolean;
+  username: string;
 };
 
 function safeGet<T>(key: string, fallback: T): T {
@@ -37,10 +43,27 @@ export const storage = {
   getSettings: (): AppSettings => safeGet<AppSettings>(KEYS.settings, DEFAULT_SETTINGS),
   setSettings: (settings: AppSettings) => safeSet(KEYS.settings, settings),
 
+  getAuth: (): AuthState =>
+    safeGet<AuthState>(KEYS.auth, { isAuthenticated: false, username: "" }),
+
+  isAuthenticated: (): boolean => {
+    const auth = safeGet<AuthState>(KEYS.auth, { isAuthenticated: false, username: "" });
+    return auth.isAuthenticated;
+  },
+
+  login: (username: string) =>
+    safeSet<AuthState>(KEYS.auth, { isAuthenticated: true, username }),
+
+  logout: () => {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem(KEYS.auth);
+  },
+
   clearAll: () => {
     if (typeof window === "undefined") return;
     localStorage.removeItem(KEYS.assets);
     localStorage.removeItem(KEYS.risks);
     localStorage.removeItem(KEYS.settings);
+    localStorage.removeItem(KEYS.auth);
   },
 };

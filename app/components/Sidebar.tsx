@@ -9,6 +9,7 @@ type NavItem = {
 type SidebarProps = {
   active: string;
   onNavigate: (id: string) => void;
+  onLogout?: () => void;
 };
 
 function ShieldIcon() {
@@ -59,17 +60,17 @@ const NAV_ITEMS: NavItem[] = [
   { id: "settings",   label: "Settings",        icon: <CogIcon /> },
 ];
 
-export default function Sidebar({ active, onNavigate }: SidebarProps) {
+export default function Sidebar({ active, onNavigate, onLogout }: SidebarProps) {
   return (
-    <aside className="flex md:flex-col w-full md:w-64 md:min-h-screen bg-slate-900 border-b md:border-b-0 md:border-r border-slate-700/50 shrink-0">
+    <aside className="flex md:flex-col w-full md:w-64 md:min-h-screen bg-white/80 backdrop-blur-sm border-b md:border-b-0 md:border-r border-slate-200 shrink-0">
       {/* Brand */}
-      <div className="hidden md:flex items-center gap-3 px-5 py-5 border-b border-slate-700/50">
-        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-indigo-600">
+      <div className="hidden md:flex items-center gap-3 px-5 py-5 border-b border-slate-200">
+        <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-600 text-white">
           <ShieldIcon />
         </div>
         <div className="leading-none">
-          <p className="text-sm font-semibold text-white">RiskGuard</p>
-          <p className="text-[10px] text-slate-400 uppercase tracking-widest mt-0.5">ISO 27005</p>
+          <p className="text-sm font-semibold text-slate-900">RiskGuard</p>
+          <p className="text-[10px] text-slate-500 uppercase tracking-widest mt-0.5">ISO 27005</p>
         </div>
       </div>
 
@@ -85,8 +86,8 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
                 w-full md:w-full flex items-center gap-2 md:gap-3 px-3 py-2.5 rounded-lg text-sm font-medium whitespace-nowrap
                 transition-all duration-150 text-left
                 ${isActive
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20"
-                  : "text-slate-400 hover:text-white hover:bg-slate-800"
+                  ? "bg-sky-600 text-white shadow-lg shadow-sky-200"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
                 }
               `}
             >
@@ -98,7 +99,15 @@ export default function Sidebar({ active, onNavigate }: SidebarProps) {
       </nav>
 
       {/* Footer */}
-      <div className="hidden md:block px-5 py-4 border-t border-slate-700/50">
+      <div className="hidden md:block px-5 py-4 border-t border-slate-200">
+        {onLogout && (
+          <button
+            onClick={onLogout}
+            className="mb-3 w-full rounded-xl border border-slate-200 bg-slate-50 text-slate-700 px-3 py-2 text-sm hover:bg-slate-100 transition-colors"
+          >
+            Sign Out
+          </button>
+        )}
         <p className="text-[11px] text-slate-500 leading-relaxed">
           BSc.I.T. · Mumbai University<br />
           NEP 2020 · GRC Project

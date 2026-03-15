@@ -63,9 +63,9 @@ export function getRiskColor(level: "Critical" | "High" | "Medium" | "Low"): str
 export function getRiskBgClass(score: number, appetite: number): string {
   const level = getRiskLevel(score, appetite);
   switch (level) {
-    case "Critical": return "bg-red-500/20 text-red-400 border border-red-500/40";
-    case "High":     return "bg-orange-500/20 text-orange-400 border border-orange-500/40";
-    case "Medium":   return "bg-yellow-500/20 text-yellow-400 border border-yellow-500/40";
-    case "Low":      return "bg-green-500/20 text-green-400 border border-green-500/40";
+    case "Critical": return "bg-red-50 text-red-700 border border-red-200";
+    case "High":     return "bg-orange-50 text-orange-700 border border-orange-200";
+    case "Medium":   return "bg-amber-50 text-amber-700 border border-amber-200";
+    case "Low":      return "bg-emerald-50 text-emerald-700 border border-emerald-200";
   }
 }
