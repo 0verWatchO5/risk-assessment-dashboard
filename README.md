@@ -88,3 +88,25 @@ Open `http://localhost:3000`.
 - `npm run lint` - run ESLint
 - `npm run build` - production build
 - `npm run start` - run production server
+
+## Executive Cost Demonstration (INR)
+
+The dashboard Overview includes a management-facing financial section to demonstrate expected spend and risk impact in Indian Rupees (`INR`).
+
+Location:
+
+- Overview page, `Financial Impact Snapshot`
+
+Displayed metrics:
+
+- One-Time Fix Budget
+- Annual Maintenance
+- 3-Year Cost If Ignored
+- 3-Year Net Savings (or Funding Gap)
+- Estimated payback period in months (when positive)
+- Highest-Cost Risk Treatments table (top 5)
+
+Notes:
+
+- Currency formatting uses locale `en-IN` with currency `INR`.
+- Values are planning estimates for executive decision support and prioritization.

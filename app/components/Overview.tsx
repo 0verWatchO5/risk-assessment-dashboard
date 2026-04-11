@@ -20,6 +20,89 @@ type OverviewProps = {
   orgName: string;
 };
 
+type CostEstimate = {
+  riskId: string;
+  threat: string;
+  treatmentStrategy: RiskEntry["treatmentStrategy"];
+  oneTimeFixCost: number;
+  annualMaintenanceCost: number;
+  annualExposureWithoutTreatment: number;
+  annualExposureAfterTreatment: number;
+  annualRiskReductionValue: number;
+};
+
+const CURRENCY = new Intl.NumberFormat("en-IN", {
+  style: "currency",
+  currency: "INR",
+  maximumFractionDigits: 0,
+});
+
+function formatMoney(value: number) {
+  return CURRENCY.format(Math.max(0, value));
+}
+
+function getAssetValueByCriticality(criticality: Asset["criticality"]) {
+  switch (criticality) {
+    case 3:
+      return 300000;
+    case 2:
+      return 120000;
+    default:
+      return 40000;
+  }
+}
+
+function estimateRiskCost(risk: RiskEntry, assets: Asset[]): CostEstimate {
+  const asset = assets.find((a) => a.id === risk.assetId);
+  const assetValue = getAssetValueByCriticality(asset?.criticality ?? 1);
+  const inherentFactor = risk.inherentRisk / 25;
+  const annualExposureWithoutTreatment = assetValue * inherentFactor * 0.4;
+
+  let oneTimeFixCost = 0;
+  let annualMaintenanceCost = 0;
+  let postTreatmentScore = risk.residualRisk ?? risk.inherentRisk;
+
+  switch (risk.treatmentStrategy) {
+    case "Mitigate":
+      oneTimeFixCost = 12000 + risk.inherentRisk * 1500;
+      annualMaintenanceCost = 3500 + risk.inherentRisk * 450;
+      postTreatmentScore = risk.residualRisk ?? Math.max(3, risk.inherentRisk - 7);
+      break;
+    case "Transfer":
+      oneTimeFixCost = 8000 + risk.inherentRisk * 700;
+      annualMaintenanceCost = 5000 + risk.inherentRisk * 280;
+      postTreatmentScore = Math.max(4, Math.round(risk.inherentRisk * 0.5));
+      break;
+    case "Avoid":
+      oneTimeFixCost = 18000 + risk.inherentRisk * 1200;
+      annualMaintenanceCost = 2000 + risk.inherentRisk * 120;
+      postTreatmentScore = Math.max(1, Math.round(risk.inherentRisk * 0.2));
+      break;
+    case "Accept":
+      oneTimeFixCost = 2000 + risk.inherentRisk * 200;
+      annualMaintenanceCost = 3000 + risk.inherentRisk * 300;
+      postTreatmentScore = Math.max(8, Math.round(risk.inherentRisk * 0.9));
+      break;
+  }
+
+  const annualExposureAfterTreatment = assetValue * (postTreatmentScore / 25) * 0.4;
+  const annualRiskReductionValue = Math.max(
+    0,
+    annualExposureWithoutTreatment - annualExposureAfterTreatment
+  );
+
+  return {
+    riskId: risk.id,
+    threat: risk.threat,
+    treatmentStrategy: risk.treatmentStrategy,
+    oneTimeFixCost,
+    annualMaintenanceCost,
+    annualExposureWithoutTreatment,
+    annualExposureAfterTreatment,
+    annualRiskReductionValue,
+  };
+}
+
 function StatCard({
   label,
   value,
@@ -59,6 +142,33 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
   // Average inherent risk score
   const avgRisk = totalRisks > 0 ? (risks.reduce((s, r) => s + r.inherentRisk, 0) / totalRisks).toFixed(1) : "N/A";
   const appetiteMarker = Math.min(100, Math.max(0, (riskAppetite / 25) * 100));
+
+  const estimatedCosts = risks.map((risk) => estimateRiskCost(risk, assets));
+  const oneTimeFixBudget = estimatedCosts.reduce((sum, cost) => sum + cost.oneTimeFixCost, 0);
+  const annualMaintenanceBudget = estimatedCosts.reduce(
+    (sum, cost) => sum + cost.annualMaintenanceCost,
+    0
+  );
+  const annualExposureNoAction = estimatedCosts.reduce(
+    (sum, cost) => sum + cost.annualExposureWithoutTreatment,
+    0
+  );
+  const annualExposureAfterTreatment = estimatedCosts.reduce(
+    (sum, cost) => sum + cost.annualExposureAfterTreatment,
+    0
+  );
+  const annualRiskReductionValue = estimatedCosts.reduce(
+    (sum, cost) => sum + cost.annualRiskReductionValue,
+    0
+  );
+  const threeYearProgramCost = oneTimeFixBudget + annualMaintenanceBudget * 3;
+  const threeYearDoNothingCost = annualExposureNoAction * 3;
+  const threeYearNetSavings = threeYearDoNothingCost - threeYearProgramCost;
+  const yearlyNetBenefit = annualRiskReductionValue - annualMaintenanceBudget;
+  const paybackMonths =
+    oneTimeFixBudget > 0 && yearlyNetBenefit > 0
+      ? Math.ceil((oneTimeFixBudget / yearlyNetBenefit) * 12)
+      : null;
 
   // ── Donut chart: Treatment Strategy breakdown ──────────────────────────
   const treatmentData = {
@@ -148,6 +258,81 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
           sub={`Threshold: >${riskAppetite}`}
           accent={exceedingAppetite > 0 ? "border-red-200 bg-red-50" : undefined}
         />
+      </div>
+
+      {/* Cost summary for executive reporting */}
+      <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+              Financial Impact Snapshot
+              <InfoTooltip
+                term="Cost Model"
+                definition="Estimated planning values based on risk score, treatment strategy, and asset criticality. Use for executive budgeting and prioritization, not accounting close."
+              />
+            </h3>
+            <p className="text-xs text-slate-500 mt-1">
+              Demonstrates fix budget, recurring maintenance, and cost of inaction over a 3-year horizon.
+            </p>
+          </div>
+          {paybackMonths !== null && (
+            <span className="text-xs font-semibold px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              Estimated payback: {paybackMonths} months
+            </span>
+          )}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">One-Time Fix Budget</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{formatMoney(oneTimeFixBudget)}</p>
+          </div>
+          <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-[11px] uppercase tracking-wider text-slate-500 font-semibold">Annual Maintenance</p>
+            <p className="text-2xl font-bold text-slate-900 mt-1">{formatMoney(annualMaintenanceBudget)}</p>
+          </div>
+          <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+            <p className="text-[11px] uppercase tracking-wider text-red-700 font-semibold">3-Year Cost If Ignored</p>
+            <p className="text-2xl font-bold text-red-700 mt-1">{formatMoney(threeYearDoNothingCost)}</p>
+          </div>
+          <div
+            className={`rounded-xl border px-4 py-3 ${
+              threeYearNetSavings >= 0
+                ? "border-emerald-200 bg-emerald-50"
+                : "border-amber-200 bg-amber-50"
+            }`}
+          >
+            <p
+              className={`text-[11px] uppercase tracking-wider font-semibold ${
+                threeYearNetSavings >= 0 ? "text-emerald-700" : "text-amber-700"
+              }`}
+            >
+              3-Year Net {threeYearNetSavings >= 0 ? "Savings" : "Funding Gap"}
+            </p>
+            <p
+              className={`text-2xl font-bold mt-1 ${
+                threeYearNetSavings >= 0 ? "text-emerald-700" : "text-amber-700"
+              }`}
+            >
+              {formatMoney(Math.abs(threeYearNetSavings))}
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+          <div className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2">
+            <span className="text-slate-500">Annual exposure without treatment:</span>
+            <span className="font-semibold text-slate-900 ml-1">{formatMoney(annualExposureNoAction)}</span>
+          </div>
+          <div className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2">
+            <span className="text-slate-500">Annual exposure after treatment:</span>
+            <span className="font-semibold text-slate-900 ml-1">{formatMoney(annualExposureAfterTreatment)}</span>
+          </div>
+          <div className="rounded-lg bg-slate-50 border border-slate-200 px-3 py-2">
+            <span className="text-slate-500">Annual risk-reduction value:</span>
+            <span className="font-semibold text-slate-900 ml-1">{formatMoney(annualRiskReductionValue)}</span>
+          </div>
+        </div>
       </div>
 
       {/* Risk Appetite Banner */}
@@ -268,6 +453,45 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
                       <td className="px-5 py-3 text-slate-700">{r.treatmentStrategy}</td>
                       <td className="px-5 py-3 text-slate-500 text-xs">
                         {r.residualRisk !== undefined ? r.residualRisk : "—"}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {estimatedCosts.length > 0 && (
+        <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+          <div className="px-5 py-4 border-b border-slate-200 bg-slate-50/80">
+            <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
+              Highest-Cost Risk Treatments
+            </h3>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-slate-200">
+                  <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Threat</th>
+                  <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Strategy</th>
+                  <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Fix Cost</th>
+                  <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Annual Opex</th>
+                  <th className="text-left px-5 py-2.5 text-xs text-slate-500 uppercase">Annual Value Preserved</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-200">
+                {[...estimatedCosts]
+                  .sort((a, b) => b.oneTimeFixCost + b.annualMaintenanceCost - (a.oneTimeFixCost + a.annualMaintenanceCost))
+                  .slice(0, 5)
+                  .map((cost) => (
+                    <tr key={cost.riskId} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-5 py-3 text-slate-900">{cost.threat}</td>
+                      <td className="px-5 py-3 text-slate-700">{cost.treatmentStrategy}</td>
+                      <td className="px-5 py-3 text-slate-900 font-medium">{formatMoney(cost.oneTimeFixCost)}</td>
+                      <td className="px-5 py-3 text-slate-700">{formatMoney(cost.annualMaintenanceCost)}</td>
+                      <td className="px-5 py-3 text-emerald-700 font-medium">
+                        {formatMoney(cost.annualRiskReductionValue)}
                       </td>
                     </tr>
                   ))}
