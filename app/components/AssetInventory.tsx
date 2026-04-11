@@ -26,7 +26,12 @@ const TYPE_CLASSES: Record<AssetType, string> = {
   People:   "bg-teal-50 text-teal-700 border border-teal-200",
 };
 
-const EMPTY_FORM = { name: "", type: "Hardware" as AssetType, criticality: 2 as Criticality };
+const EMPTY_FORM = {
+  name: "",
+  owner: "",
+  type: "Hardware" as AssetType,
+  criticality: 2 as Criticality,
+};
 
 type AssetInventoryProps = {
   assets: Asset[];
@@ -42,6 +47,8 @@ export default function AssetInventory({ assets, onChange }: AssetInventoryProps
     const e: Record<string, string> = {};
     if (!form.name.trim()) e.name = "Asset name is required.";
     if (form.name.trim().length > 80) e.name = "Asset name must be 80 characters or fewer.";
+    if (!form.owner.trim()) e.owner = "Asset owner is required.";
+    if (form.owner.trim().length > 80) e.owner = "Asset owner must be 80 characters or fewer.";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -53,6 +60,7 @@ export default function AssetInventory({ assets, onChange }: AssetInventoryProps
     const newAsset: Asset = {
       id: crypto.randomUUID(),
       name: form.name.trim(),
+      owner: form.owner.trim(),
       type: form.type,
       criticality: form.criticality,
       createdAt: new Date().toISOString(),
@@ -104,7 +112,7 @@ export default function AssetInventory({ assets, onChange }: AssetInventoryProps
           <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wider">
             New Asset
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Asset Name */}
             <div className="md:col-span-1 space-y-1">
               <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
@@ -121,6 +129,24 @@ export default function AssetInventory({ assets, onChange }: AssetInventoryProps
                            focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent"
               />
               {errors.name && <p className="text-xs text-red-400">{errors.name}</p>}
+            </div>
+
+            {/* Asset Owner */}
+            <div className="md:col-span-1 space-y-1">
+              <label className="text-xs font-medium text-slate-500 uppercase tracking-wider">
+                Asset Owner
+              </label>
+              <input
+                type="text"
+                value={form.owner}
+                onChange={(e) => setForm({ ...form, owner: e.target.value })}
+                placeholder="e.g. Security Operations Lead"
+                maxLength={80}
+                className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2
+                           text-sm text-slate-900 placeholder:text-slate-400
+                           focus:outline-none focus:ring-2 focus:ring-sky-300 focus:border-transparent"
+              />
+              {errors.owner && <p className="text-xs text-red-400">{errors.owner}</p>}
             </div>
 
             {/* Asset Type */}
@@ -191,6 +217,7 @@ export default function AssetInventory({ assets, onChange }: AssetInventoryProps
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Asset Name</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Owner</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Type</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Criticality</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Registered</th>
@@ -201,6 +228,7 @@ export default function AssetInventory({ assets, onChange }: AssetInventoryProps
               {assets.map((asset) => (
                 <tr key={asset.id} className="hover:bg-slate-50 transition-colors">
                   <td className="px-4 py-3 text-slate-900 font-medium">{asset.name}</td>
+                  <td className="px-4 py-3 text-slate-700 text-xs">{asset.owner}</td>
                   <td className="px-4 py-3">
                     <span className={`px-2 py-0.5 rounded-md text-xs font-medium ${TYPE_CLASSES[asset.type]}`}>
                       {asset.type}

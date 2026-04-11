@@ -58,6 +58,7 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
 
   // Average inherent risk score
   const avgRisk = totalRisks > 0 ? (risks.reduce((s, r) => s + r.inherentRisk, 0) / totalRisks).toFixed(1) : "N/A";
+  const appetiteMarker = Math.min(100, Math.max(0, (riskAppetite / 25) * 100));
 
   // ── Donut chart: Treatment Strategy breakdown ──────────────────────────
   const treatmentData = {
@@ -167,16 +168,18 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
             style={{ width: "100%" }}
           />
         </div>
-        <div
-          className="relative mt-1"
-          style={{ paddingLeft: `${(riskAppetite / 25) * 100}%` }}
-        >
-          <div className="absolute -top-4 left-0 -translate-x-1/2 flex flex-col items-center">
-            <div className="w-px h-4 bg-slate-400" />
-            <span className="text-[10px] text-slate-500 whitespace-nowrap mt-0.5">Appetite ({riskAppetite})</span>
+        <div className="relative mt-2 h-8">
+          <div
+            className="absolute -top-5 -translate-x-1/2 flex flex-col items-center"
+            style={{ left: `${appetiteMarker}%` }}
+          >
+            <div className="w-px h-5 bg-slate-400" />
+            <span className="text-[10px] text-slate-500 whitespace-nowrap mt-0.5">
+              Appetite ({riskAppetite})
+            </span>
           </div>
         </div>
-        <div className="flex justify-between text-[10px] text-slate-400 mt-4">
+        <div className="flex justify-between text-[10px] text-slate-400 mt-1">
           <span>1 — Minimal</span>
           <span>25 — Maximum</span>
         </div>

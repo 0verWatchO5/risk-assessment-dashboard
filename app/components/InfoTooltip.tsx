@@ -27,18 +27,18 @@ export default function InfoTooltip({ term, definition }: InfoTooltipProps) {
       </button>
 
       {visible && (
-        <div
+        <span
           role="tooltip"
           className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50
                      w-60 rounded-xl bg-white border border-slate-200
                      shadow-xl p-3 pointer-events-none"
         >
-          <p className="text-xs font-semibold text-sky-700 mb-1">{term}</p>
-          <p className="text-xs text-slate-600 leading-relaxed">{definition}</p>
+          <span className="block text-xs font-semibold text-sky-700 mb-1">{term}</span>
+          <span className="block text-xs text-slate-600 leading-relaxed">{definition}</span>
           {/* Arrow */}
-          <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2
-                          border-b border-r border-slate-200 bg-white rotate-45 -mt-1" />
-        </div>
+          <span className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2
+                           border-b border-r border-slate-200 bg-white rotate-45 -mt-1" />
+        </span>
       )}
     </span>
   );

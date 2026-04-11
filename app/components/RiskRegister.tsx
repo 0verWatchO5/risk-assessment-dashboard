@@ -110,8 +110,10 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
     storage.setRisks(updated);
   }
 
-  function getAssetName(id: string) {
-    return assets.find((a) => a.id === id)?.name ?? "Unknown Asset";
+  function getAssetLabel(id: string) {
+    const asset = assets.find((a) => a.id === id);
+    if (!asset) return "Unknown Asset";
+    return `${asset.name} (${asset.owner})`;
   }
 
   return (
@@ -164,7 +166,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                 className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2
                            text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-300"
               >
-                {assets.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+                {assets.map((a) => <option key={a.id} value={a.id}>{a.name} ({a.owner})</option>)}
               </select>
               {errors.assetId && <p className="text-xs text-red-400">{errors.assetId}</p>}
             </div>
@@ -411,7 +413,7 @@ export default function RiskRegister({ assets, risks, onChange, riskAppetite }: 
                   )}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-slate-900 truncate">{risk.threat}</p>
-                    <p className="text-xs text-slate-500 truncate">{getAssetName(risk.assetId)} · {risk.vulnerability}</p>
+                    <p className="text-xs text-slate-500 truncate">{getAssetLabel(risk.assetId)} · {risk.vulnerability}</p>
                   </div>
                   <span className={`flex-shrink-0 px-2 py-1 rounded text-xs font-semibold ${getRiskBgClass(risk.inherentRisk, riskAppetite)}`}>
                     {risk.inherentRisk} / 25

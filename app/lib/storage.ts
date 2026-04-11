@@ -34,7 +34,11 @@ function safeSet<T>(key: string, value: T): void {
 }
 
 export const storage = {
-  getAssets: (): Asset[] => safeGet<Asset[]>(KEYS.assets, []),
+  getAssets: (): Asset[] =>
+    safeGet<Asset[]>(KEYS.assets, []).map((asset) => ({
+      ...asset,
+      owner: asset.owner?.trim() ? asset.owner : "Unassigned Owner",
+    })),
   setAssets: (assets: Asset[]) => safeSet(KEYS.assets, assets),
 
   getRisks: (): RiskEntry[] => safeGet<RiskEntry[]>(KEYS.risks, []),

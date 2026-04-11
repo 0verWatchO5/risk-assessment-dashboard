@@ -6,6 +6,7 @@ export const demoAssets: Asset[] = [
   {
     id: "asset-ad-server",
     name: "Active Directory Server",
+    owner: "Infrastructure Team",
     type: "Hardware",
     criticality: 3,
     createdAt: now,
@@ -13,6 +14,7 @@ export const demoAssets: Asset[] = [
   {
     id: "asset-erp-app",
     name: "ERP Application",
+    owner: "Business Systems Manager",
     type: "Software",
     criticality: 3,
     createdAt: now,
@@ -20,6 +22,7 @@ export const demoAssets: Asset[] = [
   {
     id: "asset-pii-db",
     name: "Student PII Database",
+    owner: "Data Protection Officer",
     type: "Data",
     criticality: 3,
     createdAt: now,
@@ -27,6 +30,7 @@ export const demoAssets: Asset[] = [
   {
     id: "asset-it-admin",
     name: "IT Administrator Account",
+    owner: "Head of IT Operations",
     type: "People",
     criticality: 2,
     createdAt: now,
@@ -34,6 +38,7 @@ export const demoAssets: Asset[] = [
   {
     id: "asset-email-gateway",
     name: "Email Security Gateway",
+    owner: "Security Operations Lead",
     type: "Software",
     criticality: 2,
     createdAt: now,
@@ -126,6 +131,81 @@ export const demoRisks: RiskEntry[] = [
     createdAt: now,
   },
 ];
+
+const DEMO_RISK_TOTAL = 60;
+const demoRiskThreats = [
+  "Privilege Escalation",
+  "Insider Data Misuse",
+  "API Abuse",
+  "Credential Stuffing",
+  "Supply Chain Compromise",
+  "Misconfiguration Exposure",
+  "DDoS Attack",
+  "Data Corruption",
+  "Session Hijacking",
+  "Endpoint Malware",
+];
+
+const demoRiskVulnerabilities = [
+  "Excessive admin permissions",
+  "No behavior analytics baseline",
+  "Missing API rate limiting",
+  "Weak password policy",
+  "Unverified third-party updates",
+  "Default cloud security groups",
+  "No traffic scrubbing provider",
+  "Backup integrity checks missing",
+  "Long session token lifetime",
+  "Delayed endpoint patching",
+];
+
+const demoRiskStatuses: RiskEntry["status"][] = ["Open", "In Treatment", "Closed"];
+const demoRiskStrategies: RiskEntry["treatmentStrategy"][] = [
+  "Mitigate",
+  "Accept",
+  "Transfer",
+  "Avoid",
+];
+
+if (demoRisks.length < DEMO_RISK_TOTAL) {
+  const assetIds = demoAssets.map((asset) => asset.id);
+  const generatedRisks: RiskEntry[] = Array.from(
+    { length: DEMO_RISK_TOTAL - demoRisks.length },
+    (_, index) => {
+      const sequence = index + 1;
+      const likelihood = ((sequence % 5) + 1) as RiskEntry["likelihood"];
+      const impact = (((sequence + 2) % 5) + 1) as RiskEntry["impact"];
+      const inherentRisk = likelihood * impact;
+      const treatmentStrategy = demoRiskStrategies[sequence % demoRiskStrategies.length];
+      const status = demoRiskStatuses[sequence % demoRiskStatuses.length];
+      const residualLikelihood = Math.max(1, likelihood - 1) as RiskEntry["likelihood"];
+      const residualImpact = Math.max(1, impact - 1) as RiskEntry["impact"];
+
+      return {
+        id: `risk-generated-${sequence.toString().padStart(2, "0")}`,
+        assetId: assetIds[sequence % assetIds.length],
+        threat: demoRiskThreats[sequence % demoRiskThreats.length],
+        vulnerability: demoRiskVulnerabilities[sequence % demoRiskVulnerabilities.length],
+        likelihood,
+        impact,
+        inherentRisk,
+        treatmentStrategy,
+        control:
+          treatmentStrategy === "Mitigate"
+            ? "Layered controls: monitoring, MFA, and hardening"
+            : undefined,
+        residualLikelihood: treatmentStrategy === "Mitigate" ? residualLikelihood : undefined,
+        residualImpact: treatmentStrategy === "Mitigate" ? residualImpact : undefined,
+        residualRisk:
+          treatmentStrategy === "Mitigate" ? residualLikelihood * residualImpact : undefined,
+        status,
+        createdAt: now,
+      };
+    }
+  );
+
+  demoRisks.push(...generatedRisks);
+}
 
 export const demoSettings: AppSettings = {
   orgName: "CampusTech Services",

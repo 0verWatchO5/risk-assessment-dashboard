@@ -6,6 +6,7 @@ export type Criticality = 1 | 2 | 3;
 export interface Asset {
   id: string;
   name: string;
+  owner: string;
   type: AssetType;
   criticality: Criticality; // 1=Low, 2=Medium, 3=High
   createdAt: string;
