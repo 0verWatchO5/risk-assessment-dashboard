@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { useTheme } from "./ThemeProvider";
+
 type NavItem = {
   id: string;
   label: string;
@@ -53,6 +56,22 @@ function CogIcon() {
   );
 }
 
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364 1.136-1.591 1.591M21 12h-2.25m-1.136 6.364-1.591-1.591M12 18.75V21m-4.636-2.136 1.591-1.591M5.25 12H3m1.136-6.364 1.591 1.591M12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5z" />
+    </svg>
+  );
+}
+
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-4 h-4">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0112.75 21a9.75 9.75 0 119.002-15.998 7.5 7.5 0 000 9.999z" />
+    </svg>
+  );
+}
+
 const NAV_ITEMS: NavItem[] = [
   { id: "overview",   label: "Overview",        icon: <GridIcon /> },
   { id: "assets",     label: "Asset Inventory", icon: <ServerIcon /> },
@@ -61,6 +80,13 @@ const NAV_ITEMS: NavItem[] = [
 ];
 
 export default function Sidebar({ active, onNavigate, onLogout }: SidebarProps) {
+  const { theme, toggleTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <aside className="flex md:flex-col w-full md:w-64 md:min-h-screen bg-white/80 backdrop-blur-sm border-b md:border-b-0 md:border-r border-slate-200 shrink-0">
       {/* Brand */}
@@ -99,16 +125,26 @@ export default function Sidebar({ active, onNavigate, onLogout }: SidebarProps) 
       </nav>
 
       {/* Footer */}
-      <div className="hidden md:block px-5 py-4 border-t border-slate-200">
+      <div className="flex items-center gap-2 px-3 py-2 border-t border-slate-200 md:block md:px-5 md:py-4">
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+          aria-label="Toggle dark mode"
+        >
+          {mounted ? (theme === "dark" ? <SunIcon /> : <MoonIcon />) : <span className="w-4 h-4 rounded-full border border-current opacity-60" />}
+          <span className="hidden lg:inline">{mounted ? (theme === "dark" ? "Light mode" : "Dark mode") : "Theme"}</span>
+        </button>
+
         {onLogout && (
           <button
             onClick={onLogout}
-            className="mb-3 w-full rounded-xl border border-slate-200 bg-slate-50 text-slate-700 px-3 py-2 text-sm hover:bg-slate-100 transition-colors"
+            className="md:mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 text-slate-700 px-3 py-2 text-sm hover:bg-slate-100 transition-colors"
           >
             Sign Out
           </button>
         )}
-        <p className="text-[11px] text-slate-500 leading-relaxed">
+        <p className="hidden md:block text-[11px] text-slate-500 leading-relaxed">
           BSc.I.T. · Mumbai University<br />
           NEP 2020 · GRC Project
         </p>

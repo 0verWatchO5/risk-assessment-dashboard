@@ -3,12 +3,14 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { storage } from "../lib/storage";
+import { useTheme } from "../components/ThemeProvider";
 
 const DEFAULT_USERNAME = "admin";
 const DEFAULT_PASSWORD = "riskguard123";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { theme } = useTheme();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -33,7 +35,12 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-app-gradient text-slate-900 grid place-items-center px-4">
-      <section className="w-full max-w-md bg-white/90 backdrop-blur-md border border-sky-100 rounded-3xl p-7 shadow-[0_24px_80px_rgba(148,163,184,0.22)]">
+      <section
+        className="w-full max-w-md backdrop-blur-md border border-slate-200 rounded-3xl p-7 shadow-[0_24px_80px_rgba(148,163,184,0.22)]"
+        style={{
+          backgroundColor: theme === "dark" ? "rgba(15, 23, 42, 0.92)" : "rgba(255, 255, 255, 0.92)",
+        }}
+      >
         <p className="text-xs uppercase tracking-[0.2em] text-sky-600">Protected Access</p>
         <h1 className="text-2xl font-semibold mt-2 text-slate-900">RiskGuard Sign In</h1>
         <p className="text-sm text-slate-600 mt-2">

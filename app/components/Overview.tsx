@@ -10,6 +10,7 @@ import { Doughnut } from "react-chartjs-2";
 import { Asset, RiskEntry, getRiskLevel } from "../types/grc";
 import RiskHeatMap from "./RiskHeatMap";
 import InfoTooltip from "./InfoTooltip";
+import { useTheme } from "./ThemeProvider";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -124,6 +125,9 @@ function StatCard({
 }
 
 export default function Overview({ assets, risks, riskAppetite, orgName }: OverviewProps) {
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
+
   // ── KPI calculations ───────────────────────────────────────────────────
   const totalRisks = risks.length;
   const exceedingAppetite = risks.filter((r) => r.inherentRisk > riskAppetite).length;
@@ -191,7 +195,7 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
       legend: {
         position: "bottom" as const,
         labels: {
-          color: "#64748b",
+          color: isDark ? "#cbd5e1" : "#64748b",
           font: { size: 11 },
           padding: 14,
           boxWidth: 12,
@@ -199,11 +203,11 @@ export default function Overview({ assets, risks, riskAppetite, orgName }: Overv
         },
       },
       tooltip: {
-        backgroundColor: "#ffffff",
-        borderColor: "#cbd5e1",
+        backgroundColor: isDark ? "#0f172a" : "#ffffff",
+        borderColor: isDark ? "#334155" : "#cbd5e1",
         borderWidth: 1,
-        titleColor: "#0f172a",
-        bodyColor: "#475569",
+        titleColor: isDark ? "#f8fafc" : "#0f172a",
+        bodyColor: isDark ? "#cbd5e1" : "#475569",
         callbacks: {
           label: (ctx: { label?: string; parsed: number }) => {
             const pct = totalRisks > 0 ? Math.round((ctx.parsed / totalRisks) * 100) : 0;

@@ -7,6 +7,7 @@ const KEYS = {
   risks: "grc_risks",
   settings: "grc_settings",
   auth: "grc_auth",
+  theme: "grc_theme",
 };
 
 type AuthState = {
@@ -46,6 +47,17 @@ export const storage = {
 
   getSettings: (): AppSettings => safeGet<AppSettings>(KEYS.settings, DEFAULT_SETTINGS),
   setSettings: (settings: AppSettings) => safeSet(KEYS.settings, settings),
+
+  getTheme: (): "light" | "dark" => {
+    if (typeof window === "undefined") return "light";
+
+    const stored = localStorage.getItem(KEYS.theme);
+    if (stored === "light" || stored === "dark") return stored;
+
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  },
+
+  setTheme: (theme: "light" | "dark") => safeSet(KEYS.theme, theme),
 
   getAuth: (): AuthState =>
     safeGet<AuthState>(KEYS.auth, { isAuthenticated: false, username: "" }),
